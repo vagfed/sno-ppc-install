@@ -1,0 +1,72 @@
+---
+- name: DNS check
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars_files:
+    - vars/lpar.yml
+    - vars/ocp.yml
+
+  tasks:
+  - name: Check api DNS
+    fail:
+      msg: "api.{{ clustername }}.{{ basedomain }} is not defined in DNS"
+    when: lookup('community.general.dig', 'api.' + clustername + '.' + basedomain) != lpar.ip
+
+  - name: Check api-int DNS
+    fail:
+      msg: "api-int.{{ clustername }}.{{ basedomain }} is not defined in DNS"
+    when: lookup('community.general.dig', 'api-int.' + clustername + '.' + basedomain) != lpar.ip
+
+  - name: Check domain DNS
+    fail:
+      msg: "*.apps.{{ clustername }}.{{ basedomain }} is not defined in DNS"
+    when: lookup('community.general.dig', '*.apps.' + clustername + '.' + basedomain) != lpar.ip
+
+  - name: Check reverse DNS resolution
+    fail:
+      msg: "{{ lpar.ip }} is not defined in DNS"
+    when: lookup('community.general.dig', lpar.ip + '/PTR' ) == 'NXDOMAIN'
+
+  - name: Show reverse resolution
+    debug:
+      msg: "{{ lpar.ip }} is {{ lookup('community.general.dig', lpar.ip + '/PTR' ) }}"
+
+# Install services, start them and setup firewall
+- import_playbook: include/playbook_install_services.yml
+
+# Retrieve MAC address
+- import_playbook: include/playbook_collect_mac_address.yml
+
+# Setup network services based on discovered MAC
+- import_playbook: include/playbook_setup_services_for_sno.yml
+
+# Setup OCP installation
+- import_playbook: include/playbook_ocp_preparation.yml
+
+# Setup Web server
+- import_playbook: include/playbook_setup_web_server.yml
+
+# Start installation
+- import_playbook: include/playbook_start_installation.yml
+
+
+- name: Clean DHCP entry 
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+  - name: Setup DHCP on control node
+    blockinfile:
+      path: /etc/dhcp/dhcpd.conf
+      marker: "# {mark} ANSIBLE MANGED BLOCK {{ lpar.name }}"
+      state: absent
+    register: dhcp_out
+
+  - name: Restart DHCP
+    service:
+      name: dhcpd
+      state: restarted
+    when: dhcp_out.changed

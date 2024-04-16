@@ -1,0 +1,37 @@
+---
+- name: Collect MAC address from LPAR
+  hosts: localhost
+  gather_facts: no
+  collections:
+      - ibm.power_hmc
+
+  connection: local
+  become: false
+
+  vars_files:
+    - ../vars/hmcs.yml
+    - ../vars/lpar.yml
+
+  tasks:
+  - name: Boot LPAR for MAC discovery
+    hmc_command:
+      hmc_host: '{{ hmc[lpar.hmc].ip }}'
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      cmd: >
+          lpar_netboot -M -n -f -t ent
+          {{ lpar.name }}
+          {{ lpar.profile | default('default_profile') }}
+          {{ lpar.managed_system }}
+    register: lpar_data
+
+  - name: Identify MAC address
+    set_fact:
+      mac_address: "{{ lpar_data.command_output[-1].split(' ')[2] | ansible.utils.hwaddr('linux') }}"
+
+  - name: Update LPAR structure
+    set_fact:
+      lpar: "{{ lpar | combine( { 'mac_address': mac_address } ) }}"
+
+  - name: Show MAC address
+    debug:
+      msg: LPAR {{ lpar.name }} has MAC {{ lpar.mac_address }}

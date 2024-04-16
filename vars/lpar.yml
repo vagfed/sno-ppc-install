@@ -1,0 +1,23 @@
+# Sample LPAR configuaration
+#
+# If you are not using Ansible to create the LPAR, only provide name, ip, hmc, managed_system and slot_number
+# Remaining values are only used during LPAR creation
+#
+lpar:
+  name: tfv-temp-sno				# LPAR name in HMC
+  ip: 172.17.227.58				# IP address assigned to SNO LPAR
+  hmc: vhmc-p901				# name of HMC (see hmc.yml file)
+  managed_system: Server-9009-22A-SN78C3200     # Managed system hosting the LPAR
+  proc: 1					# Vitual processors if proc_unit is defined, otherwide dedicated cores
+  proc_unit: 0.1				# entitled capacity. If not present, LPAR has dedicated cores
+  mem: 16384					# RAM in GB
+  os_type: linux				# leave linux
+  max_virtual_slots: 50
+  network:
+    - network_name: rete33			# Name on virtual network (see HMC)
+      slot_number: 2				# REQUIRED. Value 2 is OK, not lower
+  npiv:
+    - vios_name: s922-vios01			# VIOS1 name
+      fc_port: fcs0				# VIOS1 fibre channel adapter to be used by LPAR
+    - vios_name: s922-vios02			# VIOS2 name
+      fc_port: fcs0				# VIOS2 fibre channel adapter to be used by LPAR

@@ -1,0 +1,7 @@
+subnet: 172.17.227.0
+netmask: 255.255.224.0
+dhcp_netmask: 255.255.255.0        # MUST be a class A, B or C
+gateway: 172.17.224.1
+nameserver: 172.17.224.5
+bastion: 172.17.227.57
+

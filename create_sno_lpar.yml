@@ -1,0 +1,63 @@
+---
+- name: Create SNO LPAR
+  hosts: localhost
+  gather_facts: no
+  collections:
+      - ibm.power_hmc
+
+  vars_files:
+    - vars/hmcs.yml
+    - vars/lpar.yml
+
+# Variables:
+# - lpar:      configuration of single LPAR to create
+# - hmc:       configuration of all HMC
+# - debug:     true/false
+
+  
+  tasks:
+  - name: Create LPAR {{ lpar.name }} on {{ lpar.managed_system }}
+    powervm_lpar_instance:
+      hmc_host: '{{ hmc[lpar.hmc].ip }}'
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      system_name: "{{ lpar.managed_system }}"
+      vm_name: "{{ lpar.name }}"
+      proc: "{{ lpar.proc }}"
+      # OCP BUG: LPAR must be with dedicated cores at installation time
+      # proc_unit: "{{ lpar.proc_unit }}"
+      mem: "{{ lpar.mem }}"
+      os_type: "{{ lpar.os_type }}"
+      max_virtual_slots: "{{ lpar.max_virtual_slots }}"
+      virt_network_config: "{{ lpar.network }}"
+      npiv_config: "{{ lpar.npiv }}"
+      state: present
+    register: testout
+    connection: local
+    become: false
+
+  - name: "{{ lpar.name }}: get facts"
+    powervm_lpar_instance:
+      hmc_host: '{{ hmc[lpar.hmc].ip }}'
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      system_name: "{{ lpar.managed_system }}"
+      vm_name: "{{ lpar.name }}"
+      state: facts
+      advanced_info: true
+    register: lpar_data
+    connection: local
+    become: false
+
+  - name: "{{ lpar.name }}: reset variable WWPN"
+    set_fact:
+      wwpn: ''
+
+  - name: "{{ lpar.name }}: Detect WWPN"
+    set_fact:
+      wwpn: "{{ wwpn | default('') }} {{ item.WWPNs }}"
+    loop: "{{ lpar_data.partition_info.VirtualFiberChannelAdapters }}"
+    loop_control:
+      label: "{{ item.WWPNs }}"
+    become: false
+
+  - debug:
+      msg: "Please create a single boot disk LUN for WWPNs: {{ wwpn }}"
