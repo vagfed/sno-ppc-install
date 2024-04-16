@@ -1,0 +1,14 @@
+# Sample OCP configuration
+#
+# OCP will use domain <clusterdomain>.<basedomain>
+#
+basedomain: power.seg.it.ibm.com		# base domain of cluster
+clustername: snotest				# name of OCP cluster
+clusternetwork: 10.128.0.0/14
+machinenetwork: 10.0.0.0/16
+servicenetwork: 172.80.0.0/16
+bootdiskwwn: 60050768108102d0d8000000000002c3	# WWPN of boot disk. WARNING: all lower cases!!!
+pullsecret: ......				# OCP pull secret
+
+# Sample pullsecret:
+pullsecret: '{"auths":{"cloud.openshift.com":{"auth": ....}}}'     # Use single quotes

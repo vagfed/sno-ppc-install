@@ -1,0 +1,29 @@
+---
+- name: Setup Web server
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars_files:
+    - ../vars/network.yml
+
+  vars:
+    rhbaseurl: https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/latest
+    rootfs: "{{ rhbaseurl }}/rhcos-live-rootfs.ppc64le.img"
+
+  tasks:
+  - name: Copy installation yaml
+    ansible.builtin.copy:
+      src: ../sno_data/{{ lpar.name }}/setup/bootstrap-in-place-for-live-iso.ign
+      dest: /var/www/html/{{ lpar.name }}-bootstrap-in-place-for-live-iso.ign
+
+  - name: Create image directory
+    ansible.builtin.file:
+      path: /var/www/html/ocp-latest
+      state: directory
+      mode: '0755'
+
+  - name: Download RHCOS root filesystem
+    ansible.builtin.get_url:
+      url: "{{ rootfs }}"
+      dest:  /var/www/html/ocp-latest/{{ rootfs | basename }}

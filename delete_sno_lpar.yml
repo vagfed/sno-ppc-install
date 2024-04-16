@@ -1,0 +1,70 @@
+---
+- name: Delete SNO LPAR
+  hosts: localhost
+  gather_facts: no
+  collections:
+      - ibm.power_hmc
+
+  vars_files:
+    - vars/hmcs.yml
+    - vars/lpar.yml
+
+
+  tasks:
+  - name: Power Off LPAR {{ lpar.name }} on {{ lpar.managed_system }}
+    powervm_lpar_instance:
+      hmc_host: "{{ hmc[lpar.hmc].ip }}"
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      system_name: "{{ lpar.managed_system }}"
+      vm_name: "{{ lpar.name }}"
+      action: shutdown
+    register: poweroff
+    failed_when: "not poweroff.changed and 'msg' in poweroff and poweroff.msg != 'Given Logical Partition is not present on the system'"
+    connection: local
+    become: false
+
+  - name: Define if WWPN cleaning is needed
+    set_fact:
+      clean_wwpn: "{% if not 'msg' in poweroff or poweroff.msg != 'Given Logical Partition is not present on the system' %}true{% else %}false{% endif %}"
+
+  - name: "{{ lpar.name }}: get facts"
+    powervm_lpar_instance:
+      hmc_host: '{{ hmc[lpar.hmc].ip }}'
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      system_name: "{{ lpar.managed_system }}"
+      vm_name: "{{ lpar.name }}"
+      state: facts
+      advanced_info: true
+    register: lpar_data
+    connection: local
+    when: clean_wwpn
+    become: false
+
+  - name: "{{ lpar.name }}: reset variable WWPN"
+    set_fact:
+      wwpn: ''
+    when: clean_wwpn
+
+  - name: "{{ lpar.name }}: detect WWPN for each vFC"
+    set_fact:
+      wwpn: "{{ wwpn | default('') }} {{ item.WWPNs }}"
+    loop: "{{ lpar_data.partition_info.VirtualFiberChannelAdapters }}"
+    loop_control:
+      label: "{{ item.WWPNs }}"
+    when: clean_wwpn
+
+  - name: Delete LPAR {{ lpar.name }} on {{ lpar.managed_system }}
+    powervm_lpar_instance:
+      hmc_host: "{{ hmc[lpar.hmc].ip }}"
+      hmc_auth: "{{ hmc[lpar.hmc].hmc_auth }}"
+      system_name: "{{ lpar.managed_system }}"
+      vm_name: "{{ lpar.name }}"
+      state: absent
+    connection: local
+    become: false
+
+  - debug:
+      msg: "Clean SAN configuration for deleted WWPNs: {{ wwpn }}"
+
+
+

@@ -1,0 +1,55 @@
+---
+- name: Setup OCP installation
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  become: false
+
+  vars_files:
+    - ../vars/ocp.yml
+
+  vars:
+    base: ../sno_data/{{ lpar.name }}
+
+  tasks:
+  - name: Create directory for {{ lpar.name }} data
+    ansible.builtin.file:
+      path: "{{ base }}"
+      state: directory
+      mode: '0755'   
+
+  - name: Create SSH key pair for OCP
+    shell: ssh-keygen -q -t rsa -N "" -f {{ base }}/ocp-rsa <<< y
+
+  - name: Read public key
+    set_fact:
+      pubkey: "{{ lookup('file', '{{ base }}/ocp-rsa.pub') }}"
+
+  - name: Remove setup directory
+    ansible.builtin.file:
+      path: "{{ base }}/setup"
+      state: absent
+
+  - name: Create setup directory
+    ansible.builtin.file:
+      path: "{{ base }}/setup"
+      state: directory
+      mode: '0755'
+
+  - name: Create install-config.yaml
+    template: 
+      src: ../templates/install_config.j2
+      dest: "{{ base }}/setup/install-config.yaml"
+
+  - name: Create install-config.yaml.save
+    template: 
+      src: ../templates/install_config.j2
+      dest: "{{ base }}/install-config.yaml.save"
+
+  - name: Create ignition config
+    command:  ../ocp/openshift-install --dir {{ base }}/setup create single-node-ignition-config
+
+  
+
+
+

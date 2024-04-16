@@ -1,0 +1,71 @@
+---
+
+# It is assumed that variable "mac_address" has been addd to lpar dictionary
+
+- name: Setup DHCP, TFTP and GRUB
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars_files:
+    - ../vars/network.yml
+
+  vars:
+    rhbaseurl: https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/latest
+    kernel: "{{ rhbaseurl }}/rhcos-live-kernel-ppc64le"
+    initramfs: "{{ rhbaseurl }}/rhcos-live-initramfs.ppc64le.img"
+
+  tasks:
+  - name: Setup DHCP on control node
+    blockinfile:
+      block: |
+        host {{ lpar.name }} {
+             hardware ethernet {{ lpar.mac_address }};
+             fixed-address {{ lpar.ip }};
+             option host-name "{{ lpar.name }}";
+             allow booting;
+        }
+      path: /etc/dhcp/dhcpd.conf
+      marker: "# {mark} ANSIBLE MANGED BLOCK {{ lpar.name }}"
+    register: dhcp_out
+
+  - name: Restart DHCP
+    service:
+      name: dhcpd
+      state: restarted
+    when: dhcp_out.changed
+
+  - name: Create image directory
+    ansible.builtin.file:
+      path: /var/lib/tftpboot/ocp-latest
+      state: directory
+      mode: '0755'
+
+  - name: Download boot images
+    ansible.builtin.get_url:
+      url: "{{ item }}"
+      dest: /var/lib/tftpboot/ocp-latest/{{ item | basename }}
+    loop:
+      - "{{ kernel }}"
+      - "{{ initramfs }}"
+
+  - name: Setup tftpboot Grub
+    blockinfile:
+      block: |
+        if [ ${net_default_mac} == {{ lpar.mac_address }} ]; then
+        default=0
+        fallback=1
+        timeout=1
+        menuentry "{{ lpar.name }}" {
+        echo "Loading kernel ...."
+        linux ocp-latest/rhcos-live-kernel-ppc64le ip={{ lpar.ip }}::{{ gateway }}:{{ netmask }}:{{ lpar.name }}:env{{ lpar.network[0].slot_number }}:none nameserver={{ nameserver }} nameserver=1.1.1.1 rd.neednet=1 ignition.platform.id=metal ignition.firstboot coreos.live.rootfs_url=http://{{ bastion }}/ocp-latest//rhcos-live-rootfs.ppc64le.img ignition.config.url=http://{{ bastion }}/{{ lpar.name }}-bootstrap-in-place-for-live-iso.ign
+        echo "Loading initrd..."
+        initrd ocp-latest/rhcos-live-initramfs.ppc64le.img
+        }
+        fi
+      marker: "# {mark} ANSIBLE MANGED BLOCK {{ lpar.name }}"
+      path: /var/lib/tftpboot/boot/grub2/grub.cfg
+      create: true
+
+
+

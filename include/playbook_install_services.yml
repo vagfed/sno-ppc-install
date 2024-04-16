@@ -1,0 +1,76 @@
+---
+- name: Install services
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars_files:
+    - ../vars/network.yml
+
+  tasks:
+  - name: Install EPEL
+    package:
+      name:
+        #- https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+        - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      state: present
+      disable_gpg_check: true
+
+  - name: Install Linux packages
+    package:
+      name:
+        - tftp-server
+        - dhcp-server
+        - grub2-tools-extra
+        - httpd
+        - libxml2-devel
+        - libxslt-devel
+        - python3-devel
+        - python3.11-devel
+        - python3-netaddr
+        - python3.11-netaddr
+        - gcc
+        - python3-dns
+        - python3.11-dns
+      state: present
+
+  - name: Firewall enable tftp and httpd
+    ansible.posix.firewalld:
+      service:  "{{ item }}"
+      state: enabled
+      permanent: true
+      immediate: true
+    loop:
+      - tftp
+      - http
+
+  - name: "Build python prereqs for Ansible (WARNING: very long task on first execution!)"
+    command: pip3 install lxml netaddr --user
+    become: false
+
+  - name: DHCP configuration prefix
+    blockinfile:
+      block: |
+        subnet {{ subnet }} netmask {{ dhcp_netmask }} {
+           filename "boot/grub2/powerpc-ieee1275/core.elf";
+        }
+
+        allow bootp;
+        option conf-file code 209 = text;
+      path: /etc/dhcp/dhcpd.conf
+      marker: "# {mark} ANSIBLE MANGED BLOCK - prefix"
+
+  - name: Prepare tftp boot structure
+    command: grub2-mknetdir --net-directory=/var/lib/tftpboot
+
+  - name: Activate and enable tftp, http and dhcp
+    systemd_service:
+      state: started
+      enabled: true
+      name: "{{ item }}"
+    loop:
+      - tftp.socket
+      - httpd
+      - dhcpd
+
+

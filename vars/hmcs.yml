@@ -1,0 +1,25 @@
+# Sample HMC configuration
+#
+# Provide a list of possible HMC (at least one) with IP and authentication. The "name" will be used in lpar.yaml file
+#
+hmc:
+  hmc1:
+    name: hmc1
+    ip: 172.17.251.3
+    hmc_auth:
+      username: hscroot
+      password: abc1234
+  hmc2:
+    name: hmc2
+    ip: 172.17.251.4
+    hmc_auth:
+      username: hscroot
+      password: abc1234
+  vhmc-p901:
+    name: vhmc-p901
+    ip: 172.17.251.91
+    hmc_auth:
+      username: hscroot
+      password: abc123
+
+
