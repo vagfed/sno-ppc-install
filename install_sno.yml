@@ -1,4 +1,10 @@
 ---
+# Update known hosts for HMC
+- import_playbook: include/playbook_update_hmc_keys.yml
+
+# Install services, start them and setup firewall
+- import_playbook: include/playbook_install_services.yml
+
 - name: DNS check
   hosts: localhost
   gather_facts: no
@@ -32,9 +38,6 @@
   - name: Show reverse resolution
     debug:
       msg: "{{ lpar.ip }} is {{ lookup('community.general.dig', lpar.ip + '/PTR' ) }}"
-
-# Install services, start them and setup firewall
-- import_playbook: include/playbook_install_services.yml
 
 # Retrieve MAC address
 - import_playbook: include/playbook_collect_mac_address.yml
