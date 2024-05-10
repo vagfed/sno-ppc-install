@@ -1,0 +1,22 @@
+---
+- name: Store known hosts of all HMCs
+  hosts: localhost
+  gather_facts: no
+
+  connection: local
+  become: false
+
+  vars_files:
+    - ../vars/hmcs.yml
+    - ../vars/lpar.yml
+
+  tasks:
+  - name: Scan ssh public keys of HMC
+    shell: "ssh-keyscan {{ hmc[lpar.hmc].ip }}"
+    register: ssh_key
+
+  - name: Update known hosts for HMC {{ hmc[lpar.hmc].ip }}
+    known_hosts:
+      name: "{{ hmc[lpar.hmc].ip }}"
+      key: "{{ item }}"
+    loop: "{{ ssh_key.stdout_lines }}"
