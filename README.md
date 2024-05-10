@@ -2,7 +2,7 @@
 
 Automated install of OpenShift Single Node on IBM Power LPAR using Ansible.
 
-The scripts must be copied on an IBM Power LPAR configured with RHEL 8.7 or higher. Do not use RHEL 9!
+The scripts must be copied on an IBM Power LPAR configured with RHEL 9 (for RHEL8 change EPEL link in include/playbook_install_services.yml).
 
 ## Initial setup
 Create a new user called "ansible" and allow it to run as root with sudo. You can use the following commands as root:
