@@ -1,0 +1,19 @@
+kind: LVMCluster
+apiVersion: lvm.topolvm.io/v1alpha1
+metadata:
+  name: lvmcluster
+  namespace: openshift-storage
+spec:
+  storage:
+    deviceClasses:
+      - fstype: xfs
+        thinPoolConfig:
+          sizePercent: 90
+          name: thin-pool-1
+          overprovisionRatio: 10
+        name: vg1
+        default: true
+        deviceSelector:
+          paths:
+          - /dev/disk/by-id/wwn-0x60050768108102d0d8000000000002be    # EXAMPLE
+          - /dev/disk/by-id/wwn-0x60050768108102d0d8000000000002bf    # EXAMPLE
