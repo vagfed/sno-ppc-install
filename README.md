@@ -75,8 +75,6 @@ OpenShift code is not always configured with the proper authorization to run on 
 
 Once OpenShift is installed, you can power off the LPAR and change the configuration to use virtual cores. When you start the LPAR again OpenShift will correctly work.
 
-If you use the provided Ansible script to create the LPAR, it will be created with dedicated cores even if you provide a virtual configuration as a workaround. Install and then change LPAR configuration if needed.
-
 
 ## Sample log output
 You can find a sample installation log into file [sample_log.md](sample_log.md)
