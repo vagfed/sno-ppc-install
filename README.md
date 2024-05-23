@@ -67,6 +67,8 @@ ssh -i sno_data/<lpar name>/id_rsa -o StrictHostKeyChecking=no -o UserKnownHosts
 You will see after logon a suggested `journalctl` command to use for logging purposes.
 
 
+## Customization
+The installed OpenShift node has a default configuration and needs to be customized. You can follow the [sample customization](yaml/README.md) page.
 
 
 ## Known installation issues
