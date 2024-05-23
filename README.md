@@ -19,26 +19,6 @@ Now clone the repository as ansible user.
 
 The required packages are installed running (once) the script `setup_ansible.sh`
 
-Ansible will complain about public keys when connecting to HMC.
-```
-TASK [Create LPAR tfv-temp-sno on Server-9009-22A-SN78C3200] *******************************************************
-fatal: [localhost]: FAILED! => {"ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3"}, "changed": false, "msg": "HmcError: b'Host public key is unknown. sshpass exits without confirming the new key.'"}
-```
-
-It will be fixed in the future. For now connect once to the HMC using ssh to add the HMC key to known hosts.
-```
-[ansible@tfv-temp sno-ppc-install]$ ssh hscroot#172.17.251.91
-ssh: Could not resolve hostname hscroot#172.17.251.91: Name or service not known
-[ansible@tfv-temp sno-ppc-install]$ ssh hscroot@172.17.251.91
-The authenticity of host '172.17.251.91 (172.17.251.91)' can't be established.
-ED25519 key fingerprint is SHA256:P/WT08vtInjVO86rgESPBzTbInDn6qmccgi95avbmy0.
-This key is not known by any other names
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '172.17.251.91' (ED25519) to the list of known hosts.
-(hscroot@172.17.251.91) Password:
-```
-
-
 ## LPAR creation (optional)
 You need to provide access to HMC and the LPAR configuration by editing the `lpar.yml` and `hmc.yml` files located into the `vars` directory. The files are already filled with sample data.
 
