@@ -1,14 +1,23 @@
-# Sample OCP configuration
 #
+# OCP configuration
+#
+
 # OCP will use domain <clusterdomain>.<basedomain>
-#
 basedomain: power.seg.it.ibm.com		# base domain of cluster
-clustername: snotest				# name of OCP cluster
+clustername: snotest				        # name of OCP cluster
+
+# Internal OCP networks
 clusternetwork: 10.128.0.0/14
 machinenetwork: 10.0.0.0/16
 servicenetwork: 172.80.0.0/16
-bootdiskwwn: 60050768108102d0d8000000000002c3	# WWPN of boot disk. WARNING: all lower cases!!!
+
+# Select the disk that will be used to install OCP
+# It is assumed to be a SAN disk and that you are providing its WWPN. 
+# IMPORTANT: the identifier must only contain lower case letters
+bootdiskwwn: 60050768108102d0d8000000000002c3	    # WWPN of boot disk. WARNING: all lower cases!!!
+
+# OpenShift pull secret for installation provided by Red Hat
 pullsecret: ......				# OCP pull secret
 
 # Sample pullsecret:
-pullsecret: '{"auths":{"cloud.openshift.com":{"auth": ....}}}'     # Use single quotes
+# pullsecret: '{"auths":{"cloud.openshift.com":{"auth": ....}}}'     # Use single quotes around pull secret
