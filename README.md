@@ -42,11 +42,11 @@ the `lpar.yml` and `hmc.yml` files located into the `vars` directory.
 
 The partition where Ansible scripts are executed will be configured ad BOOTP, TFTP and HTTP servers. The OCP LPAR will be installed using those protocols and firewall must not stop them. 
 
-The `network.yml` file located into the `vars` directory provides the network configuration of the network hosting the OCP LPAR and provide the IP address of the partition used for installation (bastion).
+The `network.yml` file located into the `vars` directory provides the network configuration of the network hosting the OCP LPAR and provide the IP address of the partition used for installation (bastion, thw host where ansible scripts will be run).
 
 The `ocp.yml` file located into the `vars` directory provides the OpenShift installation data. You need to provide your pull secret.
 
-The installation requires you to obtain the OpenShift Linux Installer (`openshift-install-inux*.tar`) from RedHat. You need to go on https://access.redhat.com/downloads and login. Select  "OpenShift COntainer Platform" and download the file. The tar file needs to be extracted, the file `openshift-install` has to made executable anc copied into the diretory `ocp`.
+The installation requires you to obtain the OpenShift Linux Installer (`openshift-install-inux*.tar`) from RedHat. You need to go on https://access.redhat.com/downloads and login. Select  "OpenShift Container Platform" and download the file. The tar file needs to be extracted, the file `openshift-install` has to made executable and copied into the diretory `ocp`.
 
 OpenShift SNO installation is done running `ansible-playbook install_sno.yml`.
 
