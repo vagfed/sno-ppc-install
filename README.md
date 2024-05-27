@@ -2,7 +2,7 @@
 
 Automated install of OpenShift Single Node on IBM Power LPAR using Ansible.
 
-The scripts must be copied on an IBM Power LPAR configured with RHEL 9 (for RHEL8 change EPEL link in include/playbook_install_services.yml).
+The scripts must be copied on an IBM Power LPAR configured with RHEL 9.
 
 ## Initial setup
 Create a new user called "ansible" and allow it to run as root with sudo. You can use the following commands as root:
@@ -42,11 +42,11 @@ the `lpar.yml` and `hmc.yml` files located into the `vars` directory.
 
 The partition where Ansible scripts are executed will be configured ad BOOTP, TFTP and HTTP servers. The OCP LPAR will be installed using those protocols and firewall must not stop them. 
 
-The `network.yml` file located into the `vars` directory provides the network configuration of the network hosting the OCP LPAR and provide the IP address of the partition used for installation (bastion, thw host where ansible scripts will be run).
+The `network.yml` file located into the `vars` directory provides the network configuration of the network hosting the OCP LPAR and the IP address of the partition used for installation (bastion, thw host where ansible scripts will be run).
 
-The `ocp.yml` file located into the `vars` directory provides the OpenShift installation data. You need to provide your pull secret.
+The `ocp.yml` file located into the `vars` directory provides the OpenShift installation data. 
 
-The installation requires you to obtain the OpenShift Linux Installer (`openshift-install-inux*.tar`) from RedHat. You need to go on https://access.redhat.com/downloads and login. Select  "OpenShift Container Platform" and download the file. The tar file needs to be extracted, the file `openshift-install` has to made executable and copied into the diretory `ocp`.
+You need to provide your RedHat pull secret in the `vars/pullsecret` to enable the installation.
 
 OpenShift SNO installation is done running `ansible-playbook install_sno.yml`.
 
@@ -57,6 +57,8 @@ OpenShift credentials will be stored in the `sno_data` directory.
 Once Ansible has completed the configuration steps, the actual installation takes place. If you want to have a feeling of the progress of the installation you have two options:
 - open a virtual console from HMC. You can not login but you will see console logs
 - use ssh to log on OpenShift as core user
+
+> Wait for ansible scipt to complete before opening a virtual console.
 
 In order to connect to the node during installation use the following command:
 
