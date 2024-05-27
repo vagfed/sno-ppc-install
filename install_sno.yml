@@ -15,29 +15,29 @@
     - vars/ocp.yml
 
   tasks:
-  - name: Check api DNS
+  - name: Check DNS "api.{{ clustername }}.{{ basedomain }}"
     fail:
       msg: "api.{{ clustername }}.{{ basedomain }} is not defined in DNS"
     when: lookup('community.general.dig', 'api.' + clustername + '.' + basedomain) != lpar.ip
 
-  - name: Check api-int DNS
+  - name: Check DNS "api-int.{{ clustername }}.{{ basedomain }}"
     fail:
       msg: "api-int.{{ clustername }}.{{ basedomain }} is not defined in DNS"
     when: lookup('community.general.dig', 'api-int.' + clustername + '.' + basedomain) != lpar.ip
 
-  - name: Check domain DNS
+  - name: Check DNS "*.apps.{{ clustername }}.{{ basedomain }}"
     fail:
       msg: "*.apps.{{ clustername }}.{{ basedomain }} is not defined in DNS"
     when: lookup('community.general.dig', '*.apps.' + clustername + '.' + basedomain) != lpar.ip
 
-  - name: Check reverse DNS resolution
+  - name: Check DNS reverse resolution "{{ sno_ip }}"
     fail:
       msg: "{{ lpar.ip }} is not defined in DNS"
-    when: lookup('community.general.dig', lpar.ip + '/PTR' ) == 'NXDOMAIN'
+    when: lookup('community.general.dig', sno_ip + '/PTR' ) == 'NXDOMAIN'
 
   - name: Show reverse resolution
     debug:
-      msg: "{{ lpar.ip }} is {{ lookup('community.general.dig', lpar.ip + '/PTR' ) }}"
+      msg: "{{ lpar.ip }} is {{ lookup('community.general.dig', sno_ip + '/PTR' ) }}"
 
 # Retrieve MAC address
 - import_playbook: include/playbook_collect_mac_address.yml
