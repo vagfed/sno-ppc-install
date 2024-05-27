@@ -46,7 +46,7 @@ The `network.yml` file located into the `vars` directory provides the network co
 
 The `ocp.yml` file located into the `vars` directory provides the OpenShift installation data. 
 
-You need to provide your RedHat pull secret in the `vars/pullsecret` to enable the installation.
+You need to provide your RedHat pull secret in the `vars/pullsecret` file to enable the installation.
 
 OpenShift SNO installation is done running `ansible-playbook install_sno.yml`.
 
