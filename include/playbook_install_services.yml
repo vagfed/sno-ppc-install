@@ -26,13 +26,15 @@
         - libxml2-devel
         - libxslt-devel
         - python3-devel
-        - python3.11-devel
         - python3-netaddr
-        - python3.11-netaddr
         - gcc
         - python3-dns
-        - python3.11-dns
+        - tar
       state: present
+
+  - name: Collect facts about system services
+    service_facts:
+    register: services_state
 
   - name: Firewall enable tftp and httpd
     ansible.posix.firewalld:
@@ -43,6 +45,7 @@
     loop:
       - tftp
       - http
+    when: services_state.ansible_facts.services['firewalld.service'].state == 'running'
 
   - name: "Build python prereqs for Ansible (WARNING: very long task on first execution!)"
     command: pip3 install lxml netaddr --user
@@ -51,7 +54,7 @@
   - name: DHCP configuration prefix
     blockinfile:
       block: |
-        subnet {{ subnet }} netmask {{ dhcp_netmask }} {
+        subnet {{ sno_subnet }} netmask {{ sno_netmask }} {
            filename "boot/grub2/powerpc-ieee1275/core.elf";
         }
 
