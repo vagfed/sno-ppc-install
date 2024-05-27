@@ -20,7 +20,11 @@ networking:
 platform:
   none: {}
 bootstrapInPlace:
+{% if bootdiskwwn is defined %}
   installationDisk: /dev/disk/by-id/wwn-0x{{ bootdiskwwn }}
+{% else %}
+  installationDisk: /dev/sda
+{% endif %}
 pullSecret: '{{ pullsecret }}'
 sshKey: |
   {{ pubkey }}
