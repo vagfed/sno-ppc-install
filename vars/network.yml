@@ -3,24 +3,21 @@
 #
 
 # This must be the IP address of the current server.
-# This machine will be configured as BOOTP, TFTP, HTTP server suring installation
+# This machine will be configured as BOOTP, TFTP, HTTP server serving installation
 bastion: 172.17.227.57
 
-# LPAR's subnet. You can use https://www.calculator.net/ip-subnet-calculator.html
+# LPAR's network configuration. 
+# You can use https://www.calculator.net/ip-subnet-calculator.html
 # In the sample the LPAR has IP 172.17.227.58/19
-# - subnet is the network address (19 bits if IP) --> 172.17.227.0
+# - subnet is the network address (19 bits if IP) --> 172.17.224.0
 # - netmask is the subnet mask --> 255.255.224.0
-subnet: 172.17.227.0
-netmask: 255.255.224.0
-
-# Default gateway to use
-gateway: 172.17.224.1
+sno_ip: 172.17.227.58         # IP address of SNO LPAR
+sno_netmask: 255.255.224.0    # netmask of SNO LPAR's IP
+sno_subnet: 172.17.224.0      # subnet name of SNO LPAR (calculate with https://www.calculator.net/ip-subnet-calculator.html)
+sno_gateway: 172.17.224.1     # SNO LPAR's default gateway
 
 # Name server to use
 nameserver: 172.17.224.5
-
-# DHCP range. It must be a class A, B or C. I suggest to keep the C class 
-dhcp_netmask: 255.255.255.0        # MUST be a class A, B or C
 
 
 
