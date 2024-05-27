@@ -14,6 +14,10 @@
     - ../vars/ocp.yml
 
   tasks:
+  - name: Compute boot disk device
+    set_fact:
+      boot_disk: "{{ '/dev/disk/by-id/wwn-0x' + bootdiskwwn if bootdiskwwn is defined else '/dev/sda' }}"
+
   - name: Boot LPAR and start network installation
     hmc_command:
       hmc_host: '{{ hmc[lpar.hmc].ip }}'
@@ -21,16 +25,16 @@
       cmd: >
         lpar_netboot -x -f -t ent -s auto -d auto
         -S {{ bastion }}
-        -G {{ gateway }}
-        -C {{ lpar.ip }}
-        -K {{ netmask }}
+        -G {{ sno_gateway }}
+        -C {{ sno_ip }}
+        -K {{ sno_netmask }}
         {{ lpar.name }}
         {{ lpar.profile | default('default_profile') }}
         {{ lpar.managed_system }}
     connection: local
 
   - name: Wait for SSH to be active
-    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ lpar.ip }} id
+    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ sno_ip }} id
     connection: local
     register: result
     retries: 10
@@ -38,9 +42,9 @@
     until: result.rc == 0
 
   - name: Check that we provided the right boot disk
-    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ lpar.ip }} ls /dev/disk/by-id/wwn-0x{{ bootdiskwwn }}
+    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ sno_ip }} ls {{ boot_disk }}
     connection: local
 
   - name: OCP BUG - set bootlist
-    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ lpar.ip }} "sudo bootlist -m normal /dev/disk/by-id/wwn-0x{{ bootdiskwwn }}"
+    shell: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ../sno_data/{{ lpar.name }}/ocp-rsa core@{{ sno_ip }} "sudo bootlist -m normal {{ boot_disk }}"
     connection: local
