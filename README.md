@@ -2,7 +2,18 @@
 
 Automated install of OpenShift Single Node on IBM Power LPAR using Ansible.
 
-The scripts must be copied on an IBM Power LPAR configured with RHEL 9.
+Requirements:
+- an existing RHEL9 installed on Power
+- a POWER9/10 LPAR for OpenShift (it can be defined manually or using provided Ansible scripts)
+- HMC credentials to poweron (and create) LPARs
+- network connectivity between RHEL9 and OpenShift
+- internet connectivity
+- RedHat "pullsecret" to download and use OpenShift binaries
+
+The scripts in this repositories must be copied on the RHEL9 environment on Power.
+
+## Architecture
+The RHEL9 will be configured with all software required to network install the new OpenShift partition. It will provide BOOTP, TFTP and HTTP services for installation. The OpenShift partition will contact the RHEL9 environment at boot time and will start installation without human interaction in about 60 minutes. RHEL9 and OpenShift may be located on different servers on in different networks.
 
 ## Initial setup
 Create a new user called "ansible" and allow it to run as root with sudo. You can use the following commands as root:
