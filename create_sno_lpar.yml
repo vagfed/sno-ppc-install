@@ -45,8 +45,7 @@
       system_name: "{{ lpar.managed_system }}"
       vm_name: "{{ lpar.name }}"
       proc: "{{ lpar.proc }}"
-      # OCP BUG: LPAR must be with dedicated cores at installation time
-      # proc_unit: "{{ lpar.proc_unit }}"
+      proc_unit: "{{ lpar.proc_unit }}"
       mem: "{{ lpar.mem }}"
       os_type: "{{ lpar.os_type }}"
       max_virtual_slots: "{{ lpar.max_virtual_slots }}"
