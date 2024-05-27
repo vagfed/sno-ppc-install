@@ -4,7 +4,7 @@
 
 # OCP will use domain <clusterdomain>.<basedomain>
 basedomain: power.seg.it.ibm.com		# base domain of cluster
-clustername: snotest				        # name of OCP cluster
+clustername: snotest                # name of OCP cluster
 
 # Internal OCP networks
 clusternetwork: 10.128.0.0/14
@@ -14,10 +14,8 @@ servicenetwork: 172.80.0.0/16
 # Select the disk that will be used to install OCP
 # It is assumed to be a SAN disk and that you are providing its WWPN. 
 # IMPORTANT: the identifier must only contain lower case letters
-bootdiskwwn: 60050768108102d0d8000000000002c3	    # WWPN of boot disk. WARNING: all lower cases!!!
+#            comment the following line to force installation on /dev/sda
+bootdiskwwn: 60050768108102d0d8000000000002d0	    
 
-# OpenShift pull secret for installation provided by Red Hat
-pullsecret: ......				# OCP pull secret
-
-# Sample pullsecret:
-# pullsecret: '{"auths":{"cloud.openshift.com":{"auth": ....}}}'     # Use single quotes around pull secret
+# OpenShift installer. Change only if you need a specific one!
+ocp_installer: https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/stable/openshift-install-linux.tar.gz
