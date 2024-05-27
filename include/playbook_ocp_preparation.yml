@@ -36,15 +36,36 @@
       state: directory
       mode: '0755'
 
+  - name: Load pull secret
+    set_fact:
+      pullsecret: "{{ lookup('file', '../vars/pullsecret')|string }}"
+
+  - name: Create install-config.yaml
+    template:
+      src: ../templates/install_config.j2
+      dest: "{{ base }}/setup/install-config.yaml"
+
+  - name: Create ocp directory for binaries
+    ansible.builtin.file:
+      path: ../ocp
+      state: directory
+      mode: '0755'
+
+  - name: Download OpenShift installer
+    ansible.builtin.get_url:
+      url: "{{ ocp_installer }}"
+      dest:  ../ocp/openshift-installer-stable.tgz
+
+  - name: Unpack OpenShift installer
+    command: tar -xf openshift-installer-stable.tgz
+    args:
+      chdir: ../ocp
+      creates: ../ocp/openshift-install
+
   - name: Create install-config.yaml
     template: 
       src: ../templates/install_config.j2
       dest: "{{ base }}/setup/install-config.yaml"
-
-  - name: Create install-config.yaml.save
-    template: 
-      src: ../templates/install_config.j2
-      dest: "{{ base }}/install-config.yaml.save"
 
   - name: Create ignition config
     command:  ../ocp/openshift-install --dir {{ base }}/setup create single-node-ignition-config
