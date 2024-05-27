@@ -38,7 +38,7 @@
 
   - name: Show reverse resolution
     debug:
-      msg: "{{ lpar.ip }} is {{ lookup('community.general.dig', sno_ip + '/PTR' ) }}"
+      msg: "{{ sno_ip }} is {{ lookup('community.general.dig', sno_ip + '/PTR' ) }}"
 
 # Retrieve MAC address
 - import_playbook: include/playbook_collect_mac_address.yml
