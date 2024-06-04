@@ -75,6 +75,8 @@ Once Ansible has completed the configuration steps, the actual installation take
 - use ssh to log on OpenShift as core user
 
 > Wait for ansible scipt to complete before opening a virtual console.
+>
+> If you see more than 5 time the line `FAILED - RETRYING: [localhost]: Wait for SSH to be active` the installation is not progressing. Please run `yum update` and restart installation: we encontered a RHEL9 bug that was fixed by updating RHEL.
 
 In order to connect to the node during installation use the following command:
 
