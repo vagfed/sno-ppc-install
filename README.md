@@ -30,6 +30,11 @@ Now clone the repository as ansible user.
 
 The required packages are installed running (once) the script `setup_ansible.sh`
 
+> *IMPORTANT*
+> 
+> Please update RHEL9 before starting installation using `yum update`.
+> There are cases where installation of LPAR fails and halts in `grub>` prompt.
+
 ## LPAR creation (optional)
 You need to provide access to HMC and the LPAR configuration by editing the `lpar.yml` and `hmc.yml` files located into the `vars` directory. The files are already filled with sample data.
 
