@@ -76,7 +76,7 @@ Once Ansible has completed the configuration steps, the actual installation take
 
 > Wait for ansible scipt to complete before opening a virtual console.
 >
-> If you see more than 5 time the line `FAILED - RETRYING: [localhost]: Wait for SSH to be active` the installation is not progressing. Please run `yum update` and restart installation: we encontered a RHEL9 bug that was fixed by updating RHEL.
+> If you see more than 5 time the line `FAILED - RETRYING: [localhost]: Wait for SSH to be active` the installation is not progressing. Please run `yum update` and restart installation: we encontered a RHEL9 bug that was fixed by updating RHEL. If installation halts open a virtual terminal on the LPAR and press enter: if you see `grub>` prompt the installation halted.
 
 In order to connect to the node during installation use the following command:
 
