@@ -22,7 +22,7 @@
         host {{ lpar.name }} {
              hardware ethernet {{ lpar.mac_address }};
              fixed-address {{ sno_ip }};
-             option host-name "{{ lpar.name }}";
+             option host-name "{{ sno_hostname }}";
              allow booting;
         }
       path: /etc/dhcp/dhcpd.conf
@@ -58,7 +58,7 @@
         timeout=1
         menuentry "{{ lpar.name }}" {
         echo "Loading kernel ...."
-        linux ocp-latest/rhcos-live-kernel-ppc64le ip={{ sno_ip }}::{{ sno_gateway }}:{{ sno_netmask }}:{{ lpar.name }}:env{{ lpar.network[0].slot_number }}:none nameserver={{ nameserver }} nameserver=1.1.1.1 rd.neednet=1 ignition.platform.id=metal ignition.firstboot coreos.live.rootfs_url=http://{{ bastion }}/ocp-latest//rhcos-live-rootfs.ppc64le.img ignition.config.url=http://{{ bastion }}/{{ lpar.name }}-bootstrap-in-place-for-live-iso.ign
+        linux ocp-latest/rhcos-live-kernel-ppc64le ip={{ sno_ip }}::{{ sno_gateway }}:{{ sno_netmask }}:{{ sno_hostname }}:env{{ lpar.network[0].slot_number }}:none nameserver={{ nameserver }} nameserver=1.1.1.1 rd.neednet=1 ignition.platform.id=metal ignition.firstboot coreos.live.rootfs_url=http://{{ bastion }}/ocp-latest//rhcos-live-rootfs.ppc64le.img ignition.config.url=http://{{ bastion }}/{{ lpar.name }}-bootstrap-in-place-for-live-iso.ign
         echo "Loading initrd..."
         initrd ocp-latest/rhcos-live-initramfs.ppc64le.img
         }
