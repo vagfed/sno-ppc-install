@@ -12,6 +12,7 @@ bastion: 172.17.227.57
 # - subnet is the network address (19 bits if IP) --> 172.17.224.0
 # - netmask is the subnet mask --> 255.255.224.0
 sno_ip: 172.17.227.58         # IP address of SNO LPAR
+sno_hostname: tfv-snotest     # hostname of the SNO LPAR
 sno_netmask: 255.255.224.0    # netmask of SNO LPAR's IP
 sno_subnet: 172.17.224.0      # subnet name of SNO LPAR (calculate with https://www.calculator.net/ip-subnet-calculator.html)
 sno_gateway: 172.17.224.1     # SNO LPAR's default gateway
