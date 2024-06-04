@@ -30,7 +30,7 @@ Now clone the repository as ansible user.
 
 The required packages are installed running (once) the script `setup_ansible.sh`
 
-> *IMPORTANT*
+> **IMPORTANT**
 > 
 > Please update RHEL9 before starting installation using `yum update`.
 > There are cases where installation of LPAR fails and halts in `grub>` prompt.
@@ -47,7 +47,7 @@ You can delete the LPAR reusing the data provided in the `lpar.yml` and `hmc.yml
 
 LPAR deletion is done running `ansible-playbook delete_sno_lpar.yml`.
 
-> WARNING: The deletion is immediate with no confirmation.
+> **WARNING**: The deletion is immediate with no confirmation.
 
 ## OpenShift installation
 
@@ -62,7 +62,7 @@ The `network.yml` file located into the `vars` directory provides the network co
 
 The `ocp.yml` file located into the `vars` directory provides the OpenShift installation data. 
 
-You need to provide your RedHat pull secret in the `vars/pullsecret` file to enable the installation.
+You need to provide your RedHat pull secret in the `vars/pullsecret` file to enable the installation. Please be sure that the file is made by **only one line** of data.
 
 OpenShift SNO installation is done running `ansible-playbook install_sno.yml`.
 
