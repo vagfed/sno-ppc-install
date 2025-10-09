@@ -49,6 +49,13 @@ LPAR deletion is done running `ansible-playbook delete_sno_lpar.yml`.
 
 > **WARNING**: The deletion is immediate with no confirmation.
 
+## DNS configuration
+OpenShift requires a valid DNS configuration to be provided before installation. You can find instructions on RedHat's
+[User-provisioned DNS requirements](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html-single/installing_on_bare_metal/index#installation-dns-user-infra_installing-bare-metal-network-customizations)
+
+For a quick setup of DNS on the RHEL9 LPAR used for SNO installation please refer to the [`extras`](extras) directory.
+
+
 ## OpenShift installation
 
 Assuming that LPAR has been created, you must be sure that the LPAR configuration and HMC definitions are current in 
